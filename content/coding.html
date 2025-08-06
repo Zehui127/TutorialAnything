@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeetCode Hot 100 Prep</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .code-block {
+            background-color: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            margin-top: 1rem;
+        }
+
+        .prose h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #475569;
+            padding-bottom: 0.5rem;
+        }
+
+        .prose h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .prose p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .prose ul {
+            list-style-type: disc;
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .prose li {
+            margin-bottom: 0.5rem;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid #334155;
+        }
+
+        th {
+            background-color: #1e293b;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background-color: #334155;
+        }
+
+        a {
+            color: #93c5fd;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .difficulty-easy {
+            color: #22c55e;
+        }
+
+        .difficulty-medium {
+            color: #f97316;
+        }
+
+        .difficulty-hard {
+            color: #ef4444;
+        }
+
+        .category-tag {
+            display: inline-block;
+            background-color: #334155;
+            color: #cbd5e1;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-900 text-slate-300">
+
+    <div class="container mx-auto px-4 py-8">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-white">LeetCode Hot 100 Interview Prep</h1>
+            <p class="text-lg text-slate-400 mt-2">Your guide to mastering the most frequently asked coding interview
+                questions.</p>
+        </header>
+
+        <main class="prose max-w-none">
+            <!-- Introduction Section -->
+            <section id="intro">
+                <h2>Welcome! 👋</h2>
+                <p>
+                    This website is designed to help you prepare for technical interviews that feature LeetCode-style
+                    questions. We'll focus on the "Hot 100" – a list of problems frequently asked by top tech companies.
+                    Our goal is to not just give you the answers, but to help you understand the underlying concepts so
+                    you can solve any problem.
+                </p>
+            </section>
+
+            <!-- Strategies Section -->
+            <section id="strategies">
+                <h2>💡 Strategies by Question Type</h2>
+
+                <h3>Hash Table</h3>
+                <p><strong>When to use:</strong> Look for problems that involve lookups, checking for duplicates, or
+                    counting frequencies. If you need to quickly check for the existence of a value, a hash table (or
+                    hash set) is often the most efficient tool.</p>
+                <p><strong>Strategy:</strong> The core idea is to trade space for time. By using extra memory to store
+                    data in a hash table, you can achieve O(1) average time complexity for insertions, deletions, and
+                    lookups. For "Two Sum," we store numbers and their indices to find the complement in constant time.
+                </p>
+                <div class="code-block">
+                    <pre><code># General Structure for Hash Table lookups
+hash_map = {}
+for item in data:
+    # Check if a complement/related item exists
+    if (target - item) in hash_map:
+        # Found a solution, do something
+        return [hash_map[target - item], item]
+    # Add current item to map for future lookups
+    hash_map[item] = index</code></pre>
+                </div>
+
+                <h3>Two Pointers</h3>
+                <p><strong>When to use:</strong> This pattern is ideal for problems involving sorted arrays or linked
+                    lists where you need to find a pair of elements that meet certain criteria. It's also great for
+                    finding palindromes or reversing sequences.</p>
+                <p><strong>Strategy:</strong> Use two pointers that move through the data structure. They can start from
+                    opposite ends and move towards each other (like in "Container With Most Water"), or one can be a
+                    "fast" pointer and the other "slow" (like in "Linked List Cycle"). This avoids nested loops and
+                    often leads to an O(n) solution.</p>
+                <div class="code-block">
+                    <pre><code># General Structure for Two Pointers (from ends)
+left, right = 0, len(array) - 1
+while left < right:
+    # Do some logic with array[left] and array[right]
+    if condition_met(array[left], array[right]):
+        # Move one of the pointers
+        left += 1
+    else:
+        # Move the other pointer
+        right -= 1</code></pre>
+                </div>
+
+                <h3>Sliding Window</h3>
+                <p><strong>When to use:</strong> For problems that ask for the longest/shortest/best subarray or
+                    substring that satisfies a condition. Think "Longest Substring Without Repeating Characters" or
+                    "Minimum Window Substring."</p>
+                <p><strong>Strategy:</strong> Define a "window" with two pointers, `left` and `right`. Expand the window
+                    by moving `right`. When the window no longer meets the criteria, shrink it from the left by moving
+                    `left`. This is much more efficient than generating all possible subarrays, usually resulting in
+                    O(n) time complexity.</p>
+                <div class="code-block">
+                    <pre><code># General Structure for Sliding Window
+left = 0
+result = 0
+for right in range(len(array)):
+    # Add array[right] to the window state
+
+    # While the window is invalid...
+    while window_is_invalid:
+        # Remove array[left] from the window state
+        left += 1
+
+    # Update result with the valid window
+    result = max(result, right - left + 1)</code></pre>
+                </div>
+
+                <h3>Linked List</h3>
+                <p><strong>When to use:</strong> Problems that explicitly involve linked list manipulation, such as
+                    reversal, merging, cycle detection, or removing nodes.</p>
+                <p><strong>Strategy:</strong> Keep track of `head`, `current`, `previous`, and `next` nodes carefully. A
+                    dummy head node can simplify edge cases for insertions or deletions at the beginning of the list.
+                    For cycle detection, the fast/slow pointer approach is classic. For reversals, you'll need to juggle
+                    pointers to reverse the links iteratively.</p>
+                <div class="code-block">
+                    <pre><code># General Structure for Linked List traversal
+current = head
+while current:
+    # Do something with current.val
+    current = current.next</code></pre>
+                </div>
+
+                <h3>Tree / DFS / BFS</h3>
+                <p><strong>When to use:</strong> Any problem involving a tree or graph structure. Common tasks include
+                    traversal, finding paths, calculating depth/height, or level-order operations.</p>
+                <p><strong>Strategy:</strong>
+                <ul>
+                    <li><strong>DFS (Depth-First Search):</strong> Goes deep down one path before exploring others. It's
+                        often implemented with recursion or an explicit stack. Great for pathfinding, checking
+                        connectivity, and problems where you need to explore all possibilities in a branch.</li>
+                    <li><strong>BFS (Breadth-First Search):</strong> Explores level by level. It's implemented with a
+                        queue. Perfect for finding the shortest path in an unweighted graph/tree and for level-order
+                        traversals.</li>
+                </ul>
+                </p>
+                <div class="code-block">
+                    <pre><code># General Structure for DFS (Recursive)
+def dfs(node):
+    if not node:
+        return
+    # Pre-order logic here
+    dfs(node.left)
+    # In-order logic here
+    dfs(node.right)
+    # Post-order logic here
+
+# General Structure for BFS
+from collections import deque
+def bfs(root):
+    queue = deque([root])
+    while queue:
+        node = queue.popleft()
+        # Process node
+        if node.left: queue.append(node.left)
+        if node.right: queue.append(node.right)</code></pre>
+                </div>
+
+                <h3>Dynamic Programming (DP)</h3>
+                <p><strong>When to use:</strong> Look for problems asking for the optimal (max/min/longest/shortest) way
+                    to do something, where the problem can be broken down into overlapping subproblems. "Climbing
+                    Stairs," "Coin Change," and "Longest Increasing Subsequence" are classic DP examples.</p>
+                <p><strong>Strategy:</strong>
+                <ol>
+                    <li><strong>Identify Subproblems:</strong> Define `dp[i]` or `dp[i][j]` to represent the solution
+                        for a smaller version of the problem.</li>
+                    <li><strong>Find the Recurrence Relation:</strong> Figure out how to solve `dp[i]` using the
+                        solutions to previous subproblems (e.g., `dp[i-1]`, `dp[i-2]`).</li>
+                    <li><strong>Identify Base Cases:</strong> Determine the solution for the smallest subproblems (e.g.,
+                        `dp[0]`, `dp[1]`).</li>
+                </ol>
+                You can solve it using memoization (top-down recursion with caching) or tabulation (bottom-up
+                iteration).
+                </p>
+                <div class="code-block">
+                    <pre><code># General Structure for DP (Tabulation, 1D)
+dp = [0] * (n + 1)
+# Base cases
+dp[0] = 1
+# Fill the DP table using the recurrence relation
+for i in range(1, n + 1):
+    dp[i] = dp[i-1] + dp[i-2] # e.g., Fibonacci
+return dp[n]</code></pre>
+                </div>
+
+                <h3>Backtracking</h3>
+                <p><strong>When to use:</strong> Problems that ask for all possible solutions or combinations, like
+                    "Generate Parentheses," "Permutations," and "Subsets."</p>
+                <p><strong>Strategy:</strong> This is a form of recursion. Build a solution step by step. At each step,
+                    explore all valid choices. If a choice leads to a dead end, "backtrack" by undoing the choice and
+                    trying another. A helper function with the current state (e.g., the current permutation being built)
+                    is a common pattern.</p>
+                <div class="code-block">
+                    <pre><code># General Structure for Backtracking
+def backtrack(current_state, ...):
+    if solution_found(current_state):
+        add_solution_to_results()
+        return
+
+    for choice in possible_choices:
+        # 1. Choose: Add choice to state
+        current_state.add(choice)
+        # 2. Explore: Recurse with new state
+        backtrack(current_state, ...)
+        # 3. Unchoose: Remove choice to backtrack
+        current_state.remove(choice)</code></pre>
+                </div>
+
+            </section>
+
+            <!-- Example Walkthroughs Section -->
+            <section id="walkthroughs">
+                <h2>🧑‍💻 Example Walkthroughs</h2>
+
+                <h3>1. Hash Table: Two Sum (#1)</h3>
+                <p><strong>Problem:</strong> Given an array of integers `nums` and a `target`, return indices of the two
+                    numbers that add up to `target`.</p>
+                <p><strong>Strategy:</strong> This is a classic <strong>Hash Table</strong> problem. We iterate through
+                    the array once, storing each number and its index in a hash map. For each number, we calculate its
+                    complement (`target - num`) and check if the complement already exists in the map. If it does, we've
+                    found our pair.</p>
+                <div class="code-block">
+                    <pre><code>class Solution:
+    def twoSum(self, nums: list[int], target: int) -> list[int]:
+        num_map = {}
+        for i, num in enumerate(nums):
+            complement = target - num
+            if complement in num_map:
+                return [num_map[complement], i]
+            num_map[num] = i</code></pre>
+                </div>
+
+                <h3 class="mt-8">2. Sliding Window: Longest Substring Without Repeating Characters (#3)</h3>
+                <p><strong>Problem:</strong> Given a string `s`, find the length of the longest substring without
+                    repeating characters.</p>
+                <p><strong>Strategy:</strong> This is a perfect problem for the <strong>Sliding Window</strong>
+                    technique. We use two pointers, `left` and `right`, to define our window, and a set to track
+                    characters in the window. We expand the window by moving `right`. If we find a character that's
+                    already in the set, we shrink the window from the left until the duplicate is gone. We continuously
+                    update our max length.</p>
+                <div class="code-block">
+                    <pre><code>class Solution:
+    def lengthOfLongestSubstring(self, s: str) -> int:
+        char_set = set()
+        left = 0
+        max_length = 0
+        for right in range(len(s)):
+            while s[right] in char_set:
+                char_set.remove(s[left])
+                left += 1
+            char_set.add(s[right])
+            max_length = max(max_length, right - left + 1)
+        return max_length</code></pre>
+                </div>
+
+                <h3 class="mt-8">3. Two Pointers: Container With Most Water (#11)</h3>
+                <p><strong>Problem:</strong> Given an array of non-negative integers representing heights, find two
+                    lines that together with the x-axis form a container, such that the container contains the most
+                    water.</p>
+                <p><strong>Strategy:</strong> Use the <strong>Two Pointers</strong> pattern. Start with one pointer at
+                    the beginning (`left`) and one at the end (`right`). Calculate the area. The area is limited by the
+                    shorter of the two lines. To potentially find a larger area, you must move the pointer of the
+                    shorter line inward, because moving the taller line's pointer can't increase the height and will
+                    only decrease the width.</p>
+                <div class="code-block">
+                    <pre><code>class Solution:
+    def maxArea(self, height: list[int]) -> int:
+        left, right = 0, len(height) - 1
+        max_area = 0
+        while left < right:
+            h = min(height[left], height[right])
+            w = right - left
+            max_area = max(max_area, h * w)
+            if height[left] < height[right]:
+                left += 1
+            else:
+                right -= 1
+        return max_area</code></pre>
+                </div>
+
+                <h3 class="mt-8">4. Linked List: Reverse Linked List (#206)</h3>
+                <p><strong>Problem:</strong> Given the `head` of a singly linked list, reverse the list, and return the
+                    reversed list's head.</p>
+                <p><strong>Strategy:</strong> This is a fundamental <strong>Linked List</strong> manipulation. You
+                    iterate through the list, and for each node, you reverse its `next` pointer to point to the
+                    `previous` node. You'll need three pointers: `prev` (starts as `None`), `curr` (starts as `head`),
+                    and a `next_temp` to hold the next node before you overwrite the pointer.</p>
+                <div class="code-block">
+                    <pre><code># Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def reverseList(self, head: ListNode) -> ListNode:
+        prev = None
+        curr = head
+        while curr:
+            next_temp = curr.next
+            curr.next = prev
+            prev = curr
+            curr = next_temp
+        return prev</code></pre>
+                </div>
+
+                <h3 class="mt-8">5. Dynamic Programming: Climbing Stairs (#70)</h3>
+                <p><strong>Problem:</strong> You are climbing a staircase. It takes `n` steps to reach the top. Each
+                    time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?</p>
+                <p><strong>Strategy:</strong> This is a classic <strong>Dynamic Programming</strong> problem. The number
+                    of ways to get to step `n` is the sum of the ways to get to step `n-1` (and taking one step) and the
+                    ways to get to step `n-2` (and taking two steps). This is the Fibonacci sequence. We can build a DP
+                    array where `dp[i]` stores the number of ways to reach step `i`.</p>
+                <div class="code-block">
+                    <pre><code>class Solution:
+    def climbStairs(self, n: int) -> int:
+        if n <= 2:
+            return n
+        # We only need to store the last two values
+        one_step_before = 2
+        two_steps_before = 1
+        for i in range(3, n + 1):
+            current = one_step_before + two_steps_before
+            two_steps_before = one_step_before
+            one_step_before = current
+        return one_step_before</code></pre>
+                </div>
+
+                <h3 class="mt-8">6. Backtracking: Generate Parentheses (#22)</h3>
+                <p><strong>Problem:</strong> Given `n` pairs of parentheses, write a function to generate all
+                    combinations of well-formed parentheses.</p>
+                <p><strong>Strategy:</strong> Use <strong>Backtracking</strong>. We build the string from left to right.
+                    We can add an opening parenthesis if we haven't used all `n` of them. We can add a closing
+                    parenthesis if it wouldn't exceed the number of open parentheses already placed. We recurse until
+                    the string length is `2*n`.</p>
+                <div class="code-block">
+                    <pre><code>class Solution:
+    def generateParenthesis(self, n: int) -> list[str]:
+        result = []
+        def backtrack(s = '', left = 0, right = 0):
+            if len(s) == 2 * n:
+                result.append(s)
+                return
+            if left < n:
+                backtrack(s + '(', left + 1, right)
+            if right < left:
+                backtrack(s + ')', left, right + 1)
+        backtrack()
+        return result</code></pre>
+                </div>
+
+                <h3 class="mt-8">7. Tree / DFS: Maximum Depth of Binary Tree (#104)</h3>
+                <p><strong>Problem:</strong> Given the root of a binary tree, return its maximum depth.</p>
+                <p><strong>Strategy:</strong> A perfect use case for <strong>DFS (Depth-First Search)</strong> via
+                    recursion. The depth of a tree is `1 + max(depth of left subtree, depth of right subtree)`. The base
+                    case for the recursion is when a node is `None`, in which case its depth is 0.</p>
+                <div class="code-block">
+                    <pre><code># Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def maxDepth(self, root: TreeNode) -> int:
+        if not root:
+            return 0
+        left_depth = self.maxDepth(root.left)
+        right_depth = self.maxDepth(root.right)
+        return 1 + max(left_depth, right_depth)</code></pre>
+                </div>
+
+                <h3 class="mt-8">8. Binary Search: Search in Rotated Sorted Array (#33)</h3>
+                <p><strong>Problem:</strong> You are given an integer array `nums` sorted in ascending order, and it has
+                    been rotated at some unknown pivot. Find the index of `target` if it is in `nums`, or -1 otherwise.
+                </p>
+                <p><strong>Strategy:</strong> This requires a modified <strong>Binary Search</strong>. At each step,
+                    find the middle element. Check which half of the array (from `left` to `mid` or `mid` to `right`) is
+                    sorted. Then, check if the `target` lies within the range of that sorted half. If it does, search
+                    that half; otherwise, search the other half.</p>
+                <div class="code-block">
+                    <pre><code>class Solution:
+    def search(self, nums: list[int], target: int) -> int:
+        left, right = 0, len(nums) - 1
+        while left <= right:
+            mid = (left + right) // 2
+            if nums[mid] == target:
+                return mid
+            # Check if left half is sorted
+            if nums[left] <= nums[mid]:
+                if nums[left] <= target < nums[mid]:
+                    right = mid - 1
+                else:
+                    left = mid + 1
+            # Otherwise, right half must be sorted
+            else:
+                if nums[mid] < target <= nums[right]:
+                    left = mid + 1
+                else:
+                    right = mid - 1
+        return -1</code></pre>
+                </div>
+
+                <h3 class="mt-8">9. Heap: Kth Largest Element in an Array (#215)</h3>
+                <p><strong>Problem:</strong> Given an integer array `nums` and an integer `k`, return the `k`th largest
+                    element in the array.</p>
+                <p><strong>Strategy:</strong> A <strong>Heap</strong> (or Priority Queue) is perfect for this. We can
+                    use a min-heap of size `k`. Iterate through the numbers. If the heap has fewer than `k` elements,
+                    add the number. If the heap is full and the current number is larger than the smallest element in
+                    the heap (the root), pop the root and push the current number. After iterating, the root of the heap
+                    is the `k`th largest element.</p>
+                <div class="code-block">
+                    <pre><code>import heapq
+class Solution:
+    def findKthLargest(self, nums: list[int], k: int) -> int:
+        min_heap = []
+        for num in nums:
+            if len(min_heap) < k:
+                heapq.heappush(min_heap, num)
+            elif num > min_heap[0]:
+                heapq.heapreplace(min_heap, num)
+        return min_heap[0]</code></pre>
+                </div>
+
+                <h3 class="mt-8">10. Stack: Valid Parentheses (#20)</h3>
+                <p><strong>Problem:</strong> Given a string `s` containing just the characters '(', ')', '{', '}', '['
+                    and ']', determine if the input string is valid.</p>
+                <p><strong>Strategy:</strong> Use a <strong>Stack</strong>. Iterate through the string. If you see an
+                    opening bracket, push it onto the stack. If you see a closing bracket, check if the stack is empty
+                    or if the top of the stack is the corresponding opening bracket. If it is, pop the stack. If not,
+                    the string is invalid. After the loop, the string is valid only if the stack is empty.</p>
+                <div class="code-block">
+                    <pre><code>class Solution:
+    def isValid(self, s: str) -> bool:
+        stack = []
+        mapping = {")": "(", "}": "{", "]": "["}
+        for char in s:
+            if char in mapping:
+                top_element = stack.pop() if stack else '#'
+                if mapping[char] != top_element:
+                    return False
+            else:
+                stack.append(char)
+        return not stack</code></pre>
+                </div>
+            </section>
+
+            <!-- Hot 100 Questions Table -->
+            <section id="hot100">
+                <h2>🔥 LeetCode Hot 100 List</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Title</th>
+                                <th>Difficulty</th>
+                                <th>Category</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td><a href="https://leetcode.com/problems/two-sum/" target="_blank">Two Sum</a></td>
+                                <td class="difficulty-easy">Easy</td>
+                                <td><span class="category-tag">Hash Table</span></td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td><a href="https://leetcode.com/problems/add-two-numbers/" target="_blank">Add Two
+                                        Numbers</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Linked List</span></td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td><a href="https://leetcode.com/problems/longest-substring-without-repeating-characters/"
+                                        target="_blank">Longest Substring Without Repeating Characters</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Sliding Window</span></td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td><a href="https://leetcode.com/problems/median-of-two-sorted-arrays/"
+                                        target="_blank">Median of Two Sorted Arrays</a></td>
+                                <td class="difficulty-hard">Hard</td>
+                                <td><span class="category-tag">Binary Search</span></td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td><a href="https://leetcode.com/problems/longest-palindromic-substring/"
+                                        target="_blank">Longest Palindromic Substring</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Dynamic Programming</span></td>
+                            </tr>
+                            <tr>
+                                <td>10</td>
+                                <td><a href="https://leetcode.com/problems/regular-expression-matching/"
+                                        target="_blank">Regular Expression Matching</a></td>
+                                <td class="difficulty-hard">Hard</td>
+                                <td><span class="category-tag">Dynamic Programming</span></td>
+                            </tr>
+                            <tr>
+                                <td>11</td>
+                                <td><a href="https://leetcode.com/problems/container-with-most-water/"
+                                        target="_blank">Container With Most Water</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Two Pointers</span></td>
+                            </tr>
+                            <tr>
+                                <td>15</td>
+                                <td><a href="https://leetcode.com/problems/3sum/" target="_blank">3Sum</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Two Pointers</span></td>
+                            </tr>
+                            <tr>
+                                <td>17</td>
+                                <td><a href="https://leetcode.com/problems/letter-combinations-of-a-phone-number/"
+                                        target="_blank">Letter Combinations of a Phone Number</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Backtracking</span></td>
+                            </tr>
+                            <tr>
+                                <td>19</td>
+                                <td><a href="https://leetcode.com/problems/remove-nth-node-from-end-of-list/"
+                                        target="_blank">Remove Nth Node From End of List</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Linked List</span></td>
+                            </tr>
+                            <tr>
+                                <td>20</td>
+                                <td><a href="https://leetcode.com/problems/valid-parentheses/" target="_blank">Valid
+                                        Parentheses</a></td>
+                                <td class="difficulty-easy">Easy</td>
+                                <td><span class="category-tag">Stack</span></td>
+                            </tr>
+                            <tr>
+                                <td>21</td>
+                                <td><a href="https://leetcode.com/problems/merge-two-sorted-lists/"
+                                        target="_blank">Merge Two Sorted Lists</a></td>
+                                <td class="difficulty-easy">Easy</td>
+                                <td><span class="category-tag">Linked List</span></td>
+                            </tr>
+                            <tr>
+                                <td>22</td>
+                                <td><a href="https://leetcode.com/problems/generate-parentheses/"
+                                        target="_blank">Generate Parentheses</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Backtracking</span></td>
+                            </tr>
+                            <tr>
+                                <td>23</td>
+                                <td><a href="https://leetcode.com/problems/merge-k-sorted-lists/" target="_blank">Merge
+                                        k Sorted Lists</a></td>
+                                <td class="difficulty-hard">Hard</td>
+                                <td><span class="category-tag">Heap</span></td>
+                            </tr>
+                            <tr>
+                                <td>31</td>
+                                <td><a href="https://leetcode.com/problems/next-permutation/" target="_blank">Next
+                                        Permutation</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Array</span></td>
+                            </tr>
+                            <tr>
+                                <td>32</td>
+                                <td><a href="https://leetcode.com/problems/longest-valid-parentheses/"
+                                        target="_blank">Longest Valid Parentheses</a></td>
+                                <td class="difficulty-hard">Hard</td>
+                                <td><span class="category-tag">Dynamic Programming</span></td>
+                            </tr>
+                            <tr>
+                                <td>33</td>
+                                <td><a href="https://leetcode.com/problems/search-in-rotated-sorted-array/"
+                                        target="_blank">Search in Rotated Sorted Array</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Binary Search</span></td>
+                            </tr>
+                            <tr>
+                                <td>34</td>
+                                <td><a href="https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/"
+                                        target="_blank">Find First and Last Position of Element in Sorted Array</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Binary Search</span></td>
+                            </tr>
+                            <tr>
+                                <td>39</td>
+                                <td><a href="https://leetcode.com/problems/combination-sum/" target="_blank">Combination
+                                        Sum</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Backtracking</span></td>
+                            </tr>
+                            <tr>
+                                <td>42</td>
+                                <td><a href="https://leetcode.com/problems/trapping-rain-water/"
+                                        target="_blank">Trapping Rain Water</a></td>
+                                <td class="difficulty-hard">Hard</td>
+                                <td><span class="category-tag">Two Pointers</span></td>
+                            </tr>
+                            <tr>
+                                <td>46</td>
+                                <td><a href="https://leetcode.com/problems/permutations/"
+                                        target="_blank">Permutations</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Backtracking</span></td>
+                            </tr>
+                            <tr>
+                                <td>48</td>
+                                <td><a href="https://leetcode.com/problems/rotate-image/" target="_blank">Rotate
+                                        Image</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Array</span></td>
+                            </tr>
+                            <tr>
+                                <td>49</td>
+                                <td><a href="https://leetcode.com/problems/group-anagrams/" target="_blank">Group
+                                        Anagrams</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Hash Table</span></td>
+                            </tr>
+                            <tr>
+                                <td>53</td>
+                                <td><a href="https://leetcode.com/problems/maximum-subarray/" target="_blank">Maximum
+                                        Subarray</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Dynamic Programming</span></td>
+                            </tr>
+                            <tr>
+                                <td>55</td>
+                                <td><a href="https://leetcode.com/problems/jump-game/" target="_blank">Jump Game</a>
+                                </td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Greedy</span></td>
+                            </tr>
+                            <tr>
+                                <td>56</td>
+                                <td><a href="https://leetcode.com/problems/merge-intervals/" target="_blank">Merge
+                                        Intervals</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Array</span></td>
+                            </tr>
+                            <tr>
+                                <td>62</td>
+                                <td><a href="https://leetcode.com/problems/unique-paths/" target="_blank">Unique
+                                        Paths</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Dynamic Programming</span></td>
+                            </tr>
+                            <tr>
+                                <td>64</td>
+                                <td><a href="https://leetcode.com/problems/minimum-path-sum/" target="_blank">Minimum
+                                        Path Sum</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Dynamic Programming</span></td>
+                            </tr>
+                            <tr>
+                                <td>70</td>
+                                <td><a href="https://leetcode.com/problems/climbing-stairs/" target="_blank">Climbing
+                                        Stairs</a></td>
+                                <td class="difficulty-easy">Easy</td>
+                                <td><span class="category-tag">Dynamic Programming</span></td>
+                            </tr>
+                            <tr>
+                                <td>72</td>
+                                <td><a href="https://leetcode.com/problems/edit-distance/" target="_blank">Edit
+                                        Distance</a></td>
+                                <td class="difficulty-hard">Hard</td>
+                                <td><span class="category-tag">Dynamic Programming</span></td>
+                            </tr>
+                            <tr>
+                                <td>75</td>
+                                <td><a href="https://leetcode.com/problems/sort-colors/" target="_blank">Sort Colors</a>
+                                </td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Two Pointers</span></td>
+                            </tr>
+                            <tr>
+                                <td>76</td>
+                                <td><a href="https://leetcode.com/problems/minimum-window-substring/"
+                                        target="_blank">Minimum Window Substring</a></td>
+                                <td class="difficulty-hard">Hard</td>
+                                <td><span class="category-tag">Sliding Window</span></td>
+                            </tr>
+                            <tr>
+                                <td>78</td>
+                                <td><a href="https://leetcode.com/problems/subsets/" target="_blank">Subsets</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Backtracking</span></td>
+                            </tr>
+                            <tr>
+                                <td>79</td>
+                                <td><a href="https://leetcode.com/problems/word-search/" target="_blank">Word Search</a>
+                                </td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Backtracking</span></td>
+                            </tr>
+                            <tr>
+                                <td>84</td>
+                                <td><a href="https://leetcode.com/problems/largest-rectangle-in-histogram/"
+                                        target="_blank">Largest Rectangle in Histogram</a></td>
+                                <td class="difficulty-hard">Hard</td>
+                                <td><span class="category-tag">Stack</span></td>
+                            </tr>
+                            <tr>
+                                <td>85</td>
+                                <td><a href="https://leetcode.com/problems/maximal-rectangle/" target="_blank">Maximal
+                                        Rectangle</a></td>
+                                <td class="difficulty-hard">Hard</td>
+                                <td><span class="category-tag">Dynamic Programming</span></td>
+                            </tr>
+                            <tr>
+                                <td>94</td>
+                                <td><a href="https://leetcode.com/problems/binary-tree-inorder-traversal/"
+                                        target="_blank">Binary Tree Inorder Traversal</a></td>
+                                <td class="difficulty-easy">Easy</td>
+                                <td><span class="category-tag">Tree / DFS</span></td>
+                            </tr>
+                            <tr>
+                                <td>96</td>
+                                <td><a href="https://leetcode.com/problems/unique-binary-search-trees/"
+                                        target="_blank">Unique Binary Search Trees</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Dynamic Programming</span></td>
+                            </tr>
+                            <tr>
+                                <td>98</td>
+                                <td><a href="https://leetcode.com/problems/validate-binary-search-tree/"
+                                        target="_blank">Validate Binary Search Tree</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Tree / DFS</span></td>
+                            </tr>
+                            <tr>
+                                <td>101</td>
+                                <td><a href="https://leetcode.com/problems/symmetric-tree/" target="_blank">Symmetric
+                                        Tree</a></td>
+                                <td class="difficulty-easy">Easy</td>
+                                <td><span class="category-tag">Tree / BFS</span></td>
+                            </tr>
+                            <tr>
+                                <td>102</td>
+                                <td><a href="https://leetcode.com/problems/binary-tree-level-order-traversal/"
+                                        target="_blank">Binary Tree Level Order Traversal</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Tree / BFS</span></td>
+                            </tr>
+                            <tr>
+                                <td>104</td>
+                                <td><a href="https://leetcode.com/problems/maximum-depth-of-binary-tree/"
+                                        target="_blank">Maximum Depth of Binary Tree</a></td>
+                                <td class="difficulty-easy">Easy</td>
+                                <td><span class="category-tag">Tree / DFS</span></td>
+                            </tr>
+                            <tr>
+                                <td>105</td>
+                                <td><a href="https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/"
+                                        target="_blank">Construct Binary Tree from Preorder and Inorder Traversal</a>
+                                </td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Tree / DFS</span></td>
+                            </tr>
+                            <tr>
+                                <td>114</td>
+                                <td><a href="https://leetcode.com/problems/flatten-binary-tree-to-linked-list/"
+                                        target="_blank">Flatten Binary Tree to Linked List</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Tree / DFS</span></td>
+                            </tr>
+                            <tr>
+                                <td>121</td>
+                                <td><a href="https://leetcode.com/problems/best-time-to-buy-and-sell-stock/"
+                                        target="_blank">Best Time to Buy and Sell Stock</a></td>
+                                <td class="difficulty-easy">Easy</td>
+                                <td><span class="category-tag">Array</span></td>
+                            </tr>
+                            <tr>
+                                <td>124</td>
+                                <td><a href="https://leetcode.com/problems/binary-tree-maximum-path-sum/"
+                                        target="_blank">Binary Tree Maximum Path Sum</a></td>
+                                <td class="difficulty-hard">Hard</td>
+                                <td><span class="category-tag">Tree / DFS</span></td>
+                            </tr>
+                            <tr>
+                                <td>128</td>
+                                <td><a href="https://leetcode.com/problems/longest-consecutive-sequence/"
+                                        target="_blank">Longest Consecutive Sequence</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Hash Table</span></td>
+                            </tr>
+                            <tr>
+                                <td>136</td>
+                                <td><a href="https://leetcode.com/problems/single-number/" target="_blank">Single
+                                        Number</a></td>
+                                <td class="difficulty-easy">Easy</td>
+                                <td><span class="category-tag">Bit Manipulation</span></td>
+                            </tr>
+                            <tr>
+                                <td>139</td>
+                                <td><a href="https://leetcode.com/problems/word-break/" target="_blank">Word Break</a>
+                                </td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Dynamic Programming</span></td>
+                            </tr>
+                            <tr>
+                                <td>141</td>
+                                <td><a href="https://leetcode.com/problems/linked-list-cycle/" target="_blank">Linked
+                                        List Cycle</a></td>
+                                <td class="difficulty-easy">Easy</td>
+                                <td><span class="category-tag">Linked List</span></td>
+                            </tr>
+                            <tr>
+                                <td>142</td>
+                                <td><a href="https://leetcode.com/problems/linked-list-cycle-ii/" target="_blank">Linked
+                                        List Cycle II</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Linked List</span></td>
+                            </tr>
+                            <tr>
+                                <td>146</td>
+                                <td><a href="https://leetcode.com/problems/lru-cache/" target="_blank">LRU Cache</a>
+                                </td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Hash Table</span></td>
+                            </tr>
+                            <tr>
+                                <td>148</td>
+                                <td><a href="https://leetcode.com/problems/sort-list/" target="_blank">Sort List</a>
+                                </td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Linked List</span></td>
+                            </tr>
+                            <tr>
+                                <td>152</td>
+                                <td><a href="https://leetcode.com/problems/maximum-product-subarray/"
+                                        target="_blank">Maximum Product Subarray</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Dynamic Programming</span></td>
+                            </tr>
+                            <tr>
+                                <td>155</td>
+                                <td><a href="https://leetcode.com/problems/min-stack/" target="_blank">Min Stack</a>
+                                </td>
+                                <td class="difficulty-easy">Easy</td>
+                                <td><span class="category-tag">Stack</span></td>
+                            </tr>
+                            <tr>
+                                <td>160</td>
+                                <td><a href="https://leetcode.com/problems/intersection-of-two-linked-lists/"
+                                        target="_blank">Intersection of Two Linked Lists</a></td>
+                                <td class="difficulty-easy">Easy</td>
+                                <td><span class="category-tag">Linked List</span></td>
+                            </tr>
+                            <tr>
+                                <td>169</td>
+                                <td><a href="https://leetcode.com/problems/majority-element/" target="_blank">Majority
+                                        Element</a></td>
+                                <td class="difficulty-easy">Easy</td>
+                                <td><span class="category-tag">Array</span></td>
+                            </tr>
+                            <tr>
+                                <td>198</td>
+                                <td><a href="https://leetcode.com/problems/house-robber/" target="_blank">House
+                                        Robber</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Dynamic Programming</span></td>
+                            </tr>
+                            <tr>
+                                <td>200</td>
+                                <td><a href="https://leetcode.com/problems/number-of-islands/" target="_blank">Number of
+                                        Islands</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Graph / DFS</span></td>
+                            </tr>
+                            <tr>
+                                <td>206</td>
+                                <td><a href="https://leetcode.com/problems/reverse-linked-list/" target="_blank">Reverse
+                                        Linked List</a></td>
+                                <td class="difficulty-easy">Easy</td>
+                                <td><span class="category-tag">Linked List</span></td>
+                            </tr>
+                            <tr>
+                                <td>207</td>
+                                <td><a href="https://leetcode.com/problems/course-schedule/" target="_blank">Course
+                                        Schedule</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Graph / Topological Sort</span></td>
+                            </tr>
+                            <tr>
+                                <td>208</td>
+                                <td><a href="https://leetcode.com/problems/implement-trie-prefix-tree/"
+                                        target="_blank">Implement Trie (Prefix Tree)</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Trie</span></td>
+                            </tr>
+                            <tr>
+                                <td>215</td>
+                                <td><a href="https://leetcode.com/problems/kth-largest-element-in-an-array/"
+                                        target="_blank">Kth Largest Element in an Array</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Heap</span></td>
+                            </tr>
+                            <tr>
+                                <td>221</td>
+                                <td><a href="https://leetcode.com/problems/maximal-square/" target="_blank">Maximal
+                                        Square</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Dynamic Programming</span></td>
+                            </tr>
+                            <tr>
+                                <td>226</td>
+                                <td><a href="https://leetcode.com/problems/invert-binary-tree/" target="_blank">Invert
+                                        Binary Tree</a></td>
+                                <td class="difficulty-easy">Easy</td>
+                                <td><span class="category-tag">Tree / DFS</span></td>
+                            </tr>
+                            <tr>
+                                <td>234</td>
+                                <td><a href="https://leetcode.com/problems/palindrome-linked-list/"
+                                        target="_blank">Palindrome Linked List</a></td>
+                                <td class="difficulty-easy">Easy</td>
+                                <td><span class="category-tag">Linked List</span></td>
+                            </tr>
+                            <tr>
+                                <td>236</td>
+                                <td><a href="https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/"
+                                        target="_blank">Lowest Common Ancestor of a Binary Tree</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Tree / DFS</span></td>
+                            </tr>
+                            <tr>
+                                <td>238</td>
+                                <td><a href="https://leetcode.com/problems/product-of-array-except-self/"
+                                        target="_blank">Product of Array Except Self</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Array</span></td>
+                            </tr>
+                            <tr>
+                                <td>239</td>
+                                <td><a href="https://leetcode.com/problems/sliding-window-maximum/"
+                                        target="_blank">Sliding Window Maximum</a></td>
+                                <td class="difficulty-hard">Hard</td>
+                                <td><span class="category-tag">Sliding Window</span></td>
+                            </tr>
+                            <tr>
+                                <td>240</td>
+                                <td><a href="https://leetcode.com/problems/search-a-2d-matrix-ii/"
+                                        target="_blank">Search a 2D Matrix II</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Binary Search</span></td>
+                            </tr>
+                            <tr>
+                                <td>253</td>
+                                <td><a href="https://leetcode.com/problems/meeting-rooms-ii/" target="_blank">Meeting
+                                        Rooms II</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Heap</span></td>
+                            </tr>
+                            <tr>
+                                <td>279</td>
+                                <td><a href="https://leetcode.com/problems/perfect-squares/" target="_blank">Perfect
+                                        Squares</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Dynamic Programming</span></td>
+                            </tr>
+                            <tr>
+                                <td>283</td>
+                                <td><a href="https://leetcode.com/problems/move-zeroes/" target="_blank">Move Zeroes</a>
+                                </td>
+                                <td class="difficulty-easy">Easy</td>
+                                <td><span class="category-tag">Two Pointers</span></td>
+                            </tr>
+                            <tr>
+                                <td>287</td>
+                                <td><a href="https://leetcode.com/problems/find-the-duplicate-number/"
+                                        target="_blank">Find the Duplicate Number</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Binary Search</span></td>
+                            </tr>
+                            <tr>
+                                <td>297</td>
+                                <td><a href="https://leetcode.com/problems/serialize-and-deserialize-binary-tree/"
+                                        target="_blank">Serialize and Deserialize Binary Tree</a></td>
+                                <td class="difficulty-hard">Hard</td>
+                                <td><span class="category-tag">Tree / DFS</span></td>
+                            </tr>
+                            <tr>
+                                <td>300</td>
+                                <td><a href="https://leetcode.com/problems/longest-increasing-subsequence/"
+                                        target="_blank">Longest Increasing Subsequence</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Dynamic Programming</span></td>
+                            </tr>
+                            <tr>
+                                <td>301</td>
+                                <td><a href="https://leetcode.com/problems/remove-invalid-parentheses/"
+                                        target="_blank">Remove Invalid Parentheses</a></td>
+                                <td class="difficulty-hard">Hard</td>
+                                <td><span class="category-tag">Backtracking</span></td>
+                            </tr>
+                            <tr>
+                                <td>309</td>
+                                <td><a href="https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/"
+                                        target="_blank">Best Time to Buy and Sell Stock with Cooldown</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Dynamic Programming</span></td>
+                            </tr>
+                            <tr>
+                                <td>312</td>
+                                <td><a href="https://leetcode.com/problems/burst-balloons/" target="_blank">Burst
+                                        Balloons</a></td>
+                                <td class="difficulty-hard">Hard</td>
+                                <td><span class="category-tag">Dynamic Programming</span></td>
+                            </tr>
+                            <tr>
+                                <td>322</td>
+                                <td><a href="https://leetcode.com/problems/coin-change/" target="_blank">Coin Change</a>
+                                </td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Dynamic Programming</span></td>
+                            </tr>
+                            <tr>
+                                <td>337</td>
+                                <td><a href="https://leetcode.com/problems/house-robber-iii/" target="_blank">House
+                                        Robber III</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Tree / DFS</span></td>
+                            </tr>
+                            <tr>
+                                <td>338</td>
+                                <td><a href="https://leetcode.com/problems/counting-bits/" target="_blank">Counting
+                                        Bits</a></td>
+                                <td class="difficulty-easy">Easy</td>
+                                <td><span class="category-tag">Dynamic Programming</span></td>
+                            </tr>
+                            <tr>
+                                <td>347</td>
+                                <td><a href="https://leetcode.com/problems/top-k-frequent-elements/" target="_blank">Top
+                                        K Frequent Elements</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Heap</span></td>
+                            </tr>
+                            <tr>
+                                <td>394</td>
+                                <td><a href="https://leetcode.com/problems/decode-string/" target="_blank">Decode
+                                        String</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Stack</span></td>
+                            </tr>
+                            <tr>
+                                <td>399</td>
+                                <td><a href="https://leetcode.com/problems/evaluate-division/" target="_blank">Evaluate
+                                        Division</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Graph / DFS</span></td>
+                            </tr>
+                            <tr>
+                                <td>406</td>
+                                <td><a href="https://leetcode.com/problems/queue-reconstruction-by-height/"
+                                        target="_blank">Queue Reconstruction by Height</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Greedy</span></td>
+                            </tr>
+                            <tr>
+                                <td>416</td>
+                                <td><a href="https://leetcode.com/problems/partition-equal-subset-sum/"
+                                        target="_blank">Partition Equal Subset Sum</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Dynamic Programming</span></td>
+                            </tr>
+                            <tr>
+                                <td>437</td>
+                                <td><a href="https://leetcode.com/problems/path-sum-iii/" target="_blank">Path Sum
+                                        III</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Tree / DFS</span></td>
+                            </tr>
+                            <tr>
+                                <td>438</td>
+                                <td><a href="https://leetcode.com/problems/find-all-anagrams-in-a-string/"
+                                        target="_blank">Find All Anagrams in a String</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Sliding Window</span></td>
+                            </tr>
+                            <tr>
+                                <td>448</td>
+                                <td><a href="https://leetcode.com/problems/find-all-numbers-disappeared-in-an-array/"
+                                        target="_blank">Find All Numbers Disappeared in an Array</a></td>
+                                <td class="difficulty-easy">Easy</td>
+                                <td><span class="category-tag">Array</span></td>
+                            </tr>
+                            <tr>
+                                <td>461</td>
+                                <td><a href="https://leetcode.com/problems/hamming-distance/" target="_blank">Hamming
+                                        Distance</a></td>
+                                <td class="difficulty-easy">Easy</td>
+                                <td><span class="category-tag">Bit Manipulation</span></td>
+                            </tr>
+                            <tr>
+                                <td>494</td>
+                                <td><a href="https://leetcode.com/problems/target-sum/" target="_blank">Target Sum</a>
+                                </td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Dynamic Programming</span></td>
+                            </tr>
+                            <tr>
+                                <td>538</td>
+                                <td><a href="https://leetcode.com/problems/convert-bst-to-greater-tree/"
+                                        target="_blank">Convert BST to Greater Tree</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Tree / DFS</span></td>
+                            </tr>
+                            <tr>
+                                <td>543</td>
+                                <td><a href="https://leetcode.com/problems/diameter-of-binary-tree/"
+                                        target="_blank">Diameter of Binary Tree</a></td>
+                                <td class="difficulty-easy">Easy</td>
+                                <td><span class="category-tag">Tree / DFS</span></td>
+                            </tr>
+                            <tr>
+                                <td>560</td>
+                                <td><a href="https://leetcode.com/problems/subarray-sum-equals-k/"
+                                        target="_blank">Subarray Sum Equals K</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Hash Table</span></td>
+                            </tr>
+                            <tr>
+                                <td>581</td>
+                                <td><a href="https://leetcode.com/problems/shortest-unsorted-continuous-subarray/"
+                                        target="_blank">Shortest Unsorted Continuous Subarray</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Two Pointers</span></td>
+                            </tr>
+                            <tr>
+                                <td>617</td>
+                                <td><a href="https://leetcode.com/problems/merge-two-binary-trees/"
+                                        target="_blank">Merge Two Binary Trees</a></td>
+                                <td class="difficulty-easy">Easy</td>
+                                <td><span class="category-tag">Tree / DFS</span></td>
+                            </tr>
+                            <tr>
+                                <td>621</td>
+                                <td><a href="https://leetcode.com/problems/task-scheduler/" target="_blank">Task
+                                        Scheduler</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Greedy</span></td>
+                            </tr>
+                            <tr>
+                                <td>647</td>
+                                <td><a href="https://leetcode.com/problems/palindromic-substrings/"
+                                        target="_blank">Palindromic Substrings</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Dynamic Programming</span></td>
+                            </tr>
+                            <tr>
+                                <td>739</td>
+                                <td><a href="https://leetcode.com/problems/daily-temperatures/" target="_blank">Daily
+                                        Temperatures</a></td>
+                                <td class="difficulty-medium">Medium</td>
+                                <td><span class="category-tag">Stack</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+        <footer class="text-center mt-12 text-slate-500">
+            <p>Happy Coding! Keep practicing and you'll ace that interview.</p>
+        </footer>
+    </div>
+
+</body>
+
+</html>
