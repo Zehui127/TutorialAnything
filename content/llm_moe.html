@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mixture of Experts (MoE) LLMs Tutor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9;
+            color: #1e293b;
+        }
+        .code-block {
+            background-color: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            margin-top: 1rem;
+        }
+        .prose h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #cbd5e1;
+            padding-bottom: 0.5rem;
+        }
+        .prose h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .prose h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .prose p, .prose li {
+            line-height: 1.6;
+        }
+        .prose ul {
+            list-style-type: disc;
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .prose a {
+            color: #7c3aed;
+            text-decoration: none;
+        }
+        .prose a:hover {
+            text-decoration: underline;
+        }
+        .card {
+            background-color: #ffffff;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            margin-bottom: 1.5rem;
+        }
+        .qa-box {
+            background-color: #f8fafc;
+            border-left: 4px solid #7c3aed;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        .equation {
+            display: block;
+            padding: 1rem;
+            margin: 1rem 0;
+            background-color: #f8fafc;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container mx-auto px-4 py-8">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-slate-800">Understanding Mixture of Experts (MoE)</h1>
+            <p class="text-lg text-slate-600 mt-2">A deep dive into the architecture powering sparse, efficient, and powerful LLMs.</p>
+        </header>
+
+        <main class="prose max-w-none">
+            <!-- Introduction Section -->
+            <div class="card">
+                <section id="intro">
+                    <h2>What is a Mixture of Experts? 🧠</h2>
+                    <p>
+                        A <strong>Mixture of Experts (MoE)</strong> is a powerful neural network architecture designed to make Large Language Models (LLMs) more efficient. Instead of using one massive, dense network to process all information (which is computationally expensive), an MoE model uses multiple smaller "expert" networks. For any given input, a special "gating network" decides which few experts are best suited to handle it.
+                    </p>
+                    <p>
+                        Think of it like a large company. Instead of every employee trying to do every job, the company has specialized departments (experts) like marketing, engineering, and finance. When a new task comes in, a manager (the gating network) directs it to the most relevant department. This allows the model to have a huge number of parameters (many experts) but only use a fraction of them for any single task, saving significant computational cost during inference. This is called **sparse activation**.
+                    </p>
+                </section>
+            </div>
+
+            <!-- Core Theory Section -->
+            <div class="card">
+                <section id="theory">
+                    <h2>🏗️ Core Theory & Architecture</h2>
+                    
+                    <h3>The Gating Network and Expert Routing</h3>
+                    <p>The core of an MoE layer is the gating network, which determines which experts to use. For a given input token \(x\), the gating network, parameterized by a weight matrix \(W_g\), computes scores for each of the \(N\) experts.</p>
+                    <div class="equation">
+                        $$ \text{scores} = \text{Softmax}(x \cdot W_g) $$
+                    </div>
+                    <p>Here, \(x\) is the input token's vector representation. The output is a probability distribution across all experts. In a sparse MoE, we don't use all experts. Instead, we select the **Top-K** experts with the highest scores. The final output of the MoE layer, \(y\), for an input \(x\) is a weighted sum of the outputs of these top-k experts:</p>
+                    <div class="equation">
+                        $$ y = \sum_{i \in \text{TopK}(x)} g_i(x) \cdot E_i(x) $$
+                    </div>
+                    <p>Where:</p>
+                    <ul>
+                        <li>\( \text{TopK}(x) \) is the set of indices of the top-k experts selected by the gating network.</li>
+                        <li>\( g_i(x) \) is the gating score (weight) for expert \(i\), normalized via Softmax over the selected experts.</li>
+                        <li>\( E_i(x) \) is the output of the \(i\)-th expert network for the input \(x\).</li>
+                    </ul>
+
+                    <h3>The Load Balancing Loss</h3>
+                    <p>A critical challenge in training MoE models is ensuring that all experts are utilized roughly equally. If the gating network always picks the same few experts, the others will not learn effectively. To prevent this, an auxiliary **load balancing loss** is added to the main model loss during training.</p>
+                    <p>This loss encourages the gating network to distribute tokens evenly. A common formulation for this loss is:</p>
+                    <div class="equation">
+                        $$ L_{\text{aux}} = \alpha \cdot \sum_{i=1}^{N} f_i \cdot P_i $$
+                    </div>
+                     <p>Where:</p>
+                    <ul>
+                        <li>\( N \) is the total number of experts.</li>
+                        <li>\( f_i \) is the fraction of tokens in the batch that are routed to expert \(i\).</li>
+                        <li>\( P_i \) is the average gating probability for expert \(i\) over the batch.</li>
+                        <li>\( \alpha \) is a scaling coefficient to control the importance of this loss.</li>
+                    </ul>
+                    <p>This loss term penalizes the model if any expert receives a disproportionately large fraction of the tokens or has a consistently high gating probability, pushing the model towards a more balanced routing strategy.</p>
+                </section>
+            </div>
+
+            <!-- Case Studies Section -->
+            <section id="casestudies">
+                <h2>📊 Case Studies: Open-Source MoE Models</h2>
+
+                <div class="card">
+                    <h3>Mixtral-8x7B</h3>
+                    <p>Developed by Mistral AI, Mixtral-8x7B is one of the most popular and powerful open-source MoE models. Its name is descriptive of its architecture:</p>
+                    <ul>
+                        <li><strong>8 Experts:</strong> At each MoE layer, there are 8 distinct expert networks.</li>
+                        <li><strong>7B Base:</strong> Each expert is based on the Mistral-7B architecture. This means the total number of parameters is roughly 47B (not 56B, due to shared attention parameters), but not all are used at once.</li>
+                        <li><strong>Top-2 Routing (k=2):</strong> For every token at every MoE layer, the gating network selects the **two** most suitable experts. The token is processed by both, and their outputs are combined.</li>
+                    </ul>
+                    <p><strong>Design Choice & Source Code:</strong> Mixtral's key design choice is its balance between size and efficiency. By using only 8 experts and a top-2 routing scheme, it achieves performance comparable to a 70B dense model while using only ~13B active parameters during inference. This makes it highly performant and relatively easy to deploy. You can explore the reference implementation in the official <a href="https://github.com/mistralai/mistral-src" target="_blank">mistral-src repository on GitHub</a>.</p>
+                </div>
+                
+                <div class="card">
+                    <h3>Grok-1</h3>
+                    <p>Released by xAI, Grok-1 is a massive MoE model with a different architectural philosophy.</p>
+                     <ul>
+                        <li><strong>314B Total Parameters:</strong> Grok-1 is a much larger model in terms of total parameter count.</li>
+                        <li><strong>64 Experts:</strong> It uses a larger pool of 64 experts at its MoE layers.</li>
+                        <li><strong>Top-2 Routing (k=2):</strong> Similar to Mixtral, it also selects 2 experts per token.</li>
+                        <li><strong>25% Active Parameters:</strong> For any given token, about 25% of the total weights (approx. 86B parameters) are active.</li>
+                    </ul>
+                    <p><strong>Design Choice & Source Code:</strong> Grok-1's design prioritizes model capacity and knowledge storage over raw inference speed. By having a very large number of total parameters distributed across 64 experts, it aims to store a vast amount of information. The choice of JAX for its implementation is also notable, as it is highly optimized for large-scale computation on TPUs. The source code, which details the architecture, is available in the <a href="https://github.com/xai-org/grok-1" target="_blank">grok-1 repository on GitHub</a>.</p>
+                </div>
+
+                <div class="card">
+                    <h3>Qwen1.5-MoE</h3>
+                    <p>Developed by Alibaba Cloud, the Qwen series includes powerful MoE variants that introduce interesting refinements to the training process.</p>
+                     <ul>
+                        <li><strong>Multiple Sizes:</strong> Qwen has released MoE models at different scales, such as Qwen1.5-MoE-A2.7B, which has 14.3B total parameters but only activates 2.7B for inference.</li>
+                        <li><strong>60 Experts / 4 Active:</strong> In this model, there are 60 experts in total, and the gating network selects the top 4 experts to activate for each token.</li>
+                     </ul>
+                    <p><strong>Design Choice & Source Code:</strong> Qwen's most significant contribution is the exploration of **global-batch load balancing**. Instead of calculating the auxiliary loss on a per-device micro-batch (which may contain non-diverse data), they calculate it across the entire global batch of data from all GPUs. They argue this encourages better expert specialization, as the model isn't forced to balance loads for a single, potentially homogenous batch of data (e.g., all code). This allows experts to truly specialize on domains like "code" or "foreign languages." You can find their models and source code in the <a href="https://github.com/QwenLM/Qwen" target="_blank">QwenLM repository on GitHub</a>.</p>
+                </div>
+            </section>
+
+            <!-- Code Sample Section -->
+            <section id="code">
+                <h2>💻 Code Sample: A Simplified MoE Layer</h2>
+                <p>Here is a conceptual implementation of an MoE layer using Python and PyTorch. This illustrates the core logic of the gating network and expert selection, linking back to the equations.</p>
+                <div class="card">
+                    <div class="code-block"><pre><code>import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+class Expert(nn.Module):
+    """A simple feed-forward network expert."""
+    def __init__(self, d_model, d_hidden):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(d_model, d_hidden),
+            nn.ReLU(),
+            nn.Linear(d_hidden, d_model)
+        )
+    def forward(self, x):
+        return self.net(x)
+
+class MoELayer(nn.Module):
+    def __init__(self, d_model, num_experts, top_k):
+        super().__init__()
+        self.experts = nn.ModuleList([Expert(d_model, d_model * 4) for _ in range(num_experts)])
+        self.gating_network = nn.Linear(d_model, num_experts)
+        self.top_k = top_k
+
+    def forward(self, x):
+        # x shape: (batch_size, seq_len, d_model)
+        
+        # 1. Get gating scores. This corresponds to: scores = x * W_g
+        gating_logits = self.gating_network(x) # -> (batch, seq, num_experts)
+        
+        # 2. Select top-k experts
+        top_k_logits, top_k_indices = torch.topk(gating_logits, self.top_k, dim=-1)
+        
+        # 3. Normalize scores for selected experts. This is our g_i(x)
+        top_k_scores = F.softmax(top_k_logits, dim=-1)
+        
+        # 4. Get outputs from selected experts and combine them
+        # This loop implements: y = sum(g_i(x) * E_i(x))
+        final_output = torch.zeros_like(x)
+        
+        # This part is complex to vectorize; a loop is shown for clarity
+        for i in range(self.top_k):
+            expert_indices = top_k_indices[:, :, i]
+            expert_scores = top_k_scores[:, :, i].unsqueeze(-1)
+            
+            # Route each token to its assigned expert E_i(x)
+            expert_output = torch.zeros_like(x)
+            for j in range(len(self.experts)):
+                mask = (expert_indices == j)
+                if mask.any():
+                    expert_input = x[mask]
+                    expert_output[mask] = self.experts[j](expert_input)
+
+            # Combine outputs with their scores (g_i(x) * E_i(x))
+            final_output += expert_output * expert_scores
+
+        return final_output
+
+# Example Usage
+d_model = 512
+num_experts = 8
+top_k = 2
+moe_layer = MoELayer(d_model, num_experts, top_k)
+input_tensor = torch.randn(4, 10, d_model) # Batch of 4, sequence of 10
+output = moe_layer(input_tensor)
+print("Output shape:", output.shape) # Should be (4, 10, 512)
+</code></pre></div>
+                </div>
+            </section>
+
+            <!-- Q&A Section -->
+            <section id="qa">
+                <h2>❓ Advanced Questions & Answers</h2>
+
+                <div class="card">
+                    <h4>Why use MoE instead of just making a dense model bigger?</h4>
+                    <div class="qa-box">
+                        <p><strong>Answer:</strong> It's about decoupling the number of parameters from the computation required for inference. A dense model with 1 trillion parameters would require a massive amount of computation for every single token. An MoE model might also have 1 trillion parameters, but if it only activates 2 experts (e.g., 14B parameters each), the computational cost is similar to that of a much smaller dense model. This allows for models with vast knowledge (stored in the parameters of all experts) that are still fast and relatively cheap to run.</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h4>What is "Expert Parallelism"?</h4>
+                    <div class="qa-box">
+                        <p><strong>Answer:</strong> Training MoE models efficiently requires sophisticated parallelization. **Expert Parallelism** is a strategy where the different expert networks are split across multiple GPUs. When a token needs to be processed, its representation is sent over the network to the GPU holding the selected expert. The computation happens on that GPU, and the result is sent back. This is different from data parallelism (where the data is split) or tensor parallelism (where individual matrix multiplications are split). Libraries like <a href="https://www.deepspeed.ai/tutorials/mixture-of-experts/" target="_blank">DeepSpeed</a> are essential for managing this complex communication.</p>
+                    </div>
+                </div>
+                 <div class="card">
+                    <h4>What happens if an expert gets overloaded? What is "token dropping"?</h4>
+                    <div class="qa-box">
+                        <p><strong>Answer:</strong> To ensure that no single expert becomes a computational bottleneck during training, each expert is often assigned a "capacity" – a maximum number of tokens it can process in a batch. If the gating network routes more tokens to an expert than its capacity allows, the excess tokens are "dropped." This means they are not processed by the MoE layer at all and instead pass through a residual connection directly to the next layer. The capacity factor is a critical hyperparameter to tune: too low, and you lose information from dropped tokens; too high, and you lose the efficiency benefits of balanced loads.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="text-center mt-12 text-slate-500">
+            <p>Keep exploring the frontiers of AI!</p>
+        </footer>
+    </div>
+
+</body>
+</html>
